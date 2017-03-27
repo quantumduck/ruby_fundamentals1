@@ -5,6 +5,8 @@ puts "walk east"
 puts "Run South!"
 puts "Go home."
 energy = 100
+runcost = 20
+walkcost = 2
 gohome = false
 distance = 0.0
 distNS = 0.0
@@ -53,6 +55,20 @@ while !gohome
     end
   end
 
+  # update energy
+  if (delta == 5.0)
+    if (energy > runcost)
+      energy -= runcost
+    else
+      delta = 5.0 * (energy.to_f / runcost.to_f)
+      energy = 0
+    end
+  elsif (delta == 1.0)
+    energy -= walkcost
+  end
+  
+
+
   # Calculate the distance using Pythagoras
   if (!gohome)
     if (direction == "North")
@@ -69,14 +85,8 @@ while !gohome
       distance = ((distNS.abs ** 2.0) + (distEW.abs ** 2.0)) ** 0.5
     end
 
-  # update energy
-    if (delta == 5.0)
-      energy -= 10
-    elsif (delta == 1.0)
-      energy -= 1
-    end
 
-  # Update user on distance
+    # Update user on distance
     puts "..."
     puts "You are now #{distance}km from home."
     if (energy <= 0)
