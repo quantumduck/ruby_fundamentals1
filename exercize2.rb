@@ -16,3 +16,7 @@ puts "      	from exercize2.rb:13:in `<main>'"
 
 puts 'puts "#{1.s + \'one\'}" returns:'
 puts "#{1.to_s + 'one'}"
+
+puts "Problem 3:"
+
+puts "45628 * 7839 = #{45628 * 7829}."
