@@ -4,9 +4,12 @@ puts "Go North."
 puts "walk east"
 puts "Run South!"
 puts "Go home."
+moves = 0
 energy = 100
 runcost = 20
+rundistance = 5.0
 walkcost = 2
+walkdistance = 1.0
 gohome = false
 distance = 0.0
 distNS = 0.0
@@ -20,13 +23,13 @@ while !gohome
 
   # expect first part of answer to be speed
   if (answer[0,3] == "run")
-    delta = 5.0
+    delta = rundistance
     answer = answer[4, answer.length]
   elsif (answer[0,4] == "walk")
-    delta = 1.0
+    delta = walkdistance
     answer = answer[5, answer.length]
   elsif (answer[0,2] == "go")
-    delta = 1.0
+    delta = walkdistance
     answer = answer[3, answer.length]
   else
     puts "I didn't understand."
@@ -56,17 +59,17 @@ while !gohome
   end
 
   # update energy
-  if (delta == 5.0)
+  if (delta == rundistance)
     if (energy > runcost)
       energy -= runcost
     else
-      delta = 5.0 * (energy.to_f / runcost.to_f)
+      delta = rundistance * (energy.to_f / runcost.to_f)
       energy = 0
     end
-  elsif (delta == 1.0)
+  elsif (delta == walkdistance)
     energy -= walkcost
   end
-  
+
 
 
   # Calculate the distance using Pythagoras
@@ -87,8 +90,10 @@ while !gohome
 
 
     # Update user on distance
+    moves += 1
     puts "..."
     puts "You are now #{distance}km from home."
+
     if (energy <= 0)
       puts "You have collapsed, and are unable to move."
       gohome = true
@@ -97,6 +102,17 @@ while !gohome
     elsif (energy <= 50)
       puts "You are getting tired."
     end
-    puts "What next?"
+
+    if (!gohome)
+      if (moves >= 20)
+        puts "You have been eaten by a grue."
+        gohome = true
+      elsif (moves >= 15)
+        puts "It's getting dark. You should go home."
+        puts "What next?"
+      else
+        puts "What next?"
+      end
+    end
   end
 end
