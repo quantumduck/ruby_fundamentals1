@@ -1,11 +1,17 @@
-puts "It's time to get some exercise and fresh air! Tell me where you want to go."
+puts "It's time to get some exercise and fresh air!"
+puts "How many energy bars are you bringing?"
+numbars = gets.chomp.to_i
+puts "Tell me where you want to go."
 puts "Examples:"
 puts "Go North."
 puts "walk east"
 puts "Run South!"
 puts "Go home."
+
+# SOOO many state variables.
 moves = 0
 energy = 100
+energyboost = 25
 runcost = 20
 rundistance = 5.0
 walkcost = 2
@@ -14,8 +20,12 @@ gohome = false
 distance = 0.0
 distNS = 0.0
 distEW = 0.0
-delta = 0.0
+delta = 1.0
 direction = "North"
+darkthresh = 15
+gruethresh = 20
+
+
 while !gohome
 
   # Get input
@@ -29,11 +39,25 @@ while !gohome
     delta = walkdistance
     answer = answer[5, answer.length]
   elsif (answer[0,2] == "go")
-    delta = walkdistance
+    # delta doesn't change with go, but it is walk by default.
+    if (delta == 0)
+      delta = 1.0
+    end
     answer = answer[3, answer.length]
-  else
+  elsif (answer[0,3] == "eat")
+    if (numbars <= 0)
+      puts "You don't have any energy bars to eat."
+    else
+      puts "You eat an energy bar."
+      numbars -= 1
+      energy += energyboost
+    end
+    delta = 0.0
+  elsif
     puts "I didn't understand."
+    delta = 0.0
   end
+
 
   # expect rest of answer to be a direction or home.
   if (answer != nil)
@@ -53,7 +77,24 @@ while !gohome
         puts "Ok, time to go home."
         gohome = true
         puts "..."
-        puts "Welcome home!"
+        steps = distance / delta
+        if (delta == rundistance)
+          if (steps > (energy.to_f / runcost.to_f))
+            distance -= ((energy.to_f) / (runcost.to_f)) * rundistance
+            puts "You are now #{distance}km from home."
+            puts "You have fallen and can't get up."
+          else
+            puts "Welcome home!"
+          end
+        elsif (delta == walkdistance)
+          if (steps > (energy.to_f / walkcost.to_f))
+            distance -= ((energy.to_f) / (walkcost.to_f)) * walkdistance
+            puts "You are now #{distance}km from home."
+            puts "You have collapsed, and are unable to move."
+          else
+            puts "Welcome home!"
+          end
+        end
       end
     end
   end
@@ -90,17 +131,30 @@ while !gohome
 
 
     # Update user on distance
-    moves += 1
-    puts "..."
-    puts "You are now #{distance}km from home."
+    if (delta > 0.0)
+      moves += 1
+      puts "..."
+    end
+    if (distance == 0.0)
+      if (moves > 0)
+        puts "Welcome home!"
+        gohome = 1
+      else
+        puts "You are still at home."
+      end
+    else
+      puts "You are now #{distance}km from home."
+    end
 
-    if (energy <= 0)
-      puts "You have collapsed, and are unable to move."
-      gohome = true
-    elsif (energy <= 25)
-      puts "You are getting VERY tired."
-    elsif (energy <= 50)
-      puts "You are getting tired."
+    if (moves < 20)
+      if (energy <= 0)
+        puts "You have fallen and can't get up."
+        gohome = true
+      elsif (energy <= 25)
+        puts "You are getting VERY tired."
+      elsif (energy <= 50)
+        puts "You are getting tired."
+      end
     end
 
     if (!gohome)
