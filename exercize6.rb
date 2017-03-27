@@ -12,6 +12,15 @@ while !gohome
     distance += 1
     puts "..."
     puts "You are now #{distance}km from home."
+  elsif (answer[0,7] == "go home")
+    if (distance == 0)
+      puts "You're already home!"
+    else
+      puts "Ok, time to go home."
+      gohome = true
+      puts "..."
+      puts "Welcome home!"
+    end
   else
     puts "You are still #{distance}km from home."
   end
